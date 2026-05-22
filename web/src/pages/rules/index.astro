@@ -1,0 +1,67 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { InteractiveCard } from "../../components/InteractiveCard";
+import { getAllRules } from "../../lib/rules";
+
+const rules = getAllRules();
+const ecosystems = [...new Set(rules.map((r) => r.ecosystem))];
+---
+
+<Layout title="Rules" description="Browse all Axiom style guide rules — production-grade coding standards for AI agents.">
+  <section class="max-w-7xl mx-auto px-6 py-20">
+    <!-- Header -->
+    <div class="mb-12">
+      <div class="mb-5">
+        <a href="/" class="text-[12px] text-zinc-600 hover:text-zinc-400 transition-colors font-mono">
+          ← axiom
+        </a>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-black text-zinc-100 tracking-[-0.04em] mb-3">
+        Rules
+      </h1>
+      <p class="text-zinc-500 max-w-2xl text-sm leading-relaxed">
+        {rules.length} production-grade style guides and coding standards across {ecosystems.length} ecosystems.
+        Each rule is a self-contained JSON document with human-readable sections and machine-executable agent instructions.
+      </p>
+    </div>
+
+    <!-- Stats -->
+    <div class="flex items-center gap-6 mb-8 text-[13px] font-mono">
+      <div class="flex items-center gap-2">
+        <span class="text-zinc-600">total:</span>
+        <span class="text-zinc-200 font-semibold">{rules.length}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-zinc-600">ecosystems:</span>
+        <span class="text-zinc-200 font-semibold">{ecosystems.length}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-zinc-600">formats:</span>
+        <span class="text-zinc-200 font-semibold">7</span>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    {rules.length > 0 ? (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {rules.map((rule) => (
+          <InteractiveCard
+            id={rule.id}
+            name={rule.name}
+            ecosystem={rule.ecosystem}
+            version={rule.version}
+            philosophy={rule.human_view.philosophy}
+            extensions={rule.cli_target.extensions}
+          />
+        ))}
+      </div>
+    ) : (
+      <div class="rounded-lg ring-1 ring-border p-16 text-center">
+        <p class="text-zinc-500 text-base">No rules found in the registry.</p>
+        <p class="text-zinc-600 text-sm mt-2 font-mono">
+          Add .json files to the registry/rules/ directory.
+        </p>
+      </div>
+    )}
+  </section>
+</Layout>

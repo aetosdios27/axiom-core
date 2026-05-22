@@ -1,0 +1,51 @@
+{
+  "id": "typescript-strict",
+  "name": "TypeScript Strict Mode",
+  "ecosystem": "TypeScript",
+  "version": "1.0.0",
+  "cli_target": {
+    "extensions": ["*.ts", "*.tsx"],
+    "agent_format": "cursor"
+  },
+  "human_view": {
+    "philosophy": "TypeScript exists to make illegal states unrepresentable. Enable every strict flag. Let the compiler be your first reviewer. Types are documentation that the machine verifies — invest in them. Infer where possible, annotate where it matters, and never reach for `any`.",
+    "sections": [
+      {
+        "title": "Type Safety",
+        "content": "- Enable `strict: true` in `tsconfig.json` — this is non-negotiable. It activates `strictNullChecks`, `noImplicitAny`, `strictFunctionTypes`, and more.\n- Never use `any`. Use `unknown` for truly unknown data and narrow with type guards.\n- Prefer `interface` for object shapes that may be extended. Use `type` for unions, intersections, and computed types.\n- Use discriminated unions for state machines: `type State = { status: 'loading' } | { status: 'error'; error: Error } | { status: 'ok'; data: T }`.\n- Use `as const` assertions for literal types and tuple inference."
+      },
+      {
+        "title": "Functions & Parameters",
+        "content": "- Always annotate return types for exported functions. Let TypeScript infer return types for internal/private functions.\n- Use `readonly` parameters and properties by default. Mutability is the exception, not the rule.\n- Prefer named parameters via object destructuring for functions with more than 2 parameters.\n- Use generic constraints: `<T extends Record<string, unknown>>` instead of bare `<T>`.\n- Avoid function overloads when a union type or generic will suffice."
+      },
+      {
+        "title": "Error Handling",
+        "content": "- Define custom error classes that extend `Error` with a `readonly code` property for programmatic handling.\n- Use the Result pattern (`type Result<T, E> = { ok: true; value: T } | { ok: false; error: E }`) for operations that can fail predictably.\n- Never throw in utility/library functions — return a Result. Throwing is reserved for truly exceptional, unrecoverable situations.\n- Always type `catch` blocks: `catch (error: unknown)` and narrow before accessing properties."
+      },
+      {
+        "title": "Modules & Imports",
+        "content": "- Use named exports exclusively. Default exports create refactoring hazards and inconsistent naming.\n- Barrel files (`index.ts`) are allowed only at package boundaries, never within a feature directory.\n- Import types with `import type { ... }` to ensure they are erased at compile time.\n- Organize imports: external deps → internal modules → relative imports, separated by blank lines."
+      },
+      {
+        "title": "Testing",
+        "content": "- Test files use the `.test.ts` suffix and live alongside the source file.\n- Use `describe`/`it` blocks with descriptive names that read as specifications: `it('returns an error when the user ID is empty')`.\n- Mock at the boundary, not the implementation. Inject dependencies; don't patch globals.\n- Type-check your tests: run `tsc --noEmit` in CI alongside your test runner."
+      }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a TypeScript engineer writing strict, production-grade code. You never use `any`. You enable `strict: true` in tsconfig. You use named exports only. You annotate return types on all exported functions. You prefer immutability (`readonly`, `as const`). You handle errors with the Result pattern in library code and only throw in application-level code. Your code compiles with zero errors and zero warnings under `tsc --strict`.",
+    "rules": [
+      "NEVER use `any` — use `unknown` and narrow with type guards.",
+      "ALWAYS enable `strict: true` in tsconfig.json.",
+      "NEVER use default exports — named exports only.",
+      "ALWAYS annotate return types on exported functions.",
+      "NEVER use `!` non-null assertion — narrow the type properly.",
+      "ALWAYS use `import type` for type-only imports.",
+      "NEVER mutate function parameters — use `readonly` modifier.",
+      "ALWAYS use discriminated unions for state representation.",
+      "NEVER use `enum` — use `as const` objects or union types.",
+      "ALWAYS handle `unknown` in catch blocks — never assume Error type."
+    ],
+    "canonical_snippet": "type Result<T, E = Error> =\n  | { readonly ok: true; readonly value: T }\n  | { readonly ok: false; readonly error: E };\n\nfunction ok<T>(value: T): Result<T, never> {\n  return { ok: true, value };\n}\n\nfunction err<E>(error: E): Result<never, E> {\n  return { ok: false, error };\n}\n\nasync function fetchUser(id: string): Promise<Result<User>> {\n  if (!id) {\n    return err(new Error('User ID is required'));\n  }\n\n  const response = await fetch(`/api/users/${encodeURIComponent(id)}`);\n\n  if (!response.ok) {\n    return err(new Error(`Failed to fetch user: ${response.status}`));\n  }\n\n  const data: unknown = await response.json();\n  const user = parseUser(data);\n  return ok(user);\n}"
+  }
+}

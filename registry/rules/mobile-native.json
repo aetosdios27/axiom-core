@@ -1,0 +1,26 @@
+{
+  "id": "mobile-native",
+  "name": "Native Mobile Standards",
+  "ecosystem": "Swift & Kotlin",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.swift", "*.kt"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "Native mobile code must be responsive, accessible, and battery-efficient. UI state belongs in observable models. Network calls are always cancellable. Platform conventions are not suggestions — they are requirements.",
+    "sections": [
+      { "title": "Architecture", "content": "- Use MVVM with observable state containers.\n- ViewModels own business logic. Views are dumb.\n- Use dependency injection for testability.\n- Keep view code declarative (SwiftUI / Jetpack Compose)." },
+      { "title": "Performance", "content": "- Never block the main thread.\n- Use structured concurrency (Swift async/await, Kotlin coroutines).\n- Cancel network requests when views disappear.\n- Lazy-load images with proper caching." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a native mobile engineer for iOS and Android. You write SwiftUI and Jetpack Compose. You use MVVM. You never block the main thread. You handle cancellation properly.",
+    "rules": [
+      "NEVER block the main thread.",
+      "ALWAYS use structured concurrency.",
+      "NEVER ignore cancellation — respect task lifecycle.",
+      "ALWAYS use MVVM architecture.",
+      "NEVER hardcode strings — use localization.",
+      "ALWAYS support Dynamic Type / accessibility scaling."
+    ],
+    "canonical_snippet": "// Swift\n@Observable\nclass UserViewModel {\n    var users: [User] = []\n    var isLoading = false\n    \n    func loadUsers() async {\n        isLoading = true\n        defer { isLoading = false }\n        do {\n            users = try await api.fetchUsers()\n        } catch {\n            logger.error(\"Failed to load users: \\(error)\")\n        }\n    }\n}"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "csharp-dotnet",
+  "name": "C# / .NET Modern Backend",
+  "ecosystem": "C# / .NET",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.cs"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": ".NET is a first-class backend platform. Use minimal APIs for new services. Use records for DTOs. Use nullable reference types. Dependency injection is the foundation of testability.",
+    "sections": [
+      { "title": "API Design", "content": "- Use Minimal APIs for new microservices.\n- Use `record` types for request/response DTOs.\n- Use `Results.Ok()` / `Results.NotFound()` for typed responses.\n- Group endpoints with `MapGroup` for clean routing." },
+      { "title": "Type Safety", "content": "- Enable nullable reference types project-wide.\n- Use `required` keyword for mandatory properties.\n- Use `init` setters for immutable models.\n- Use `OneOf` or discriminated unions for result types." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a .NET backend engineer. You write modern C# with minimal APIs, records, and nullable reference types. You use dependency injection. You never return null from APIs.",
+    "rules": [
+      "ALWAYS enable nullable reference types.",
+      "NEVER return null from API endpoints.",
+      "ALWAYS use records for DTOs.",
+      "NEVER use static classes for business logic.",
+      "ALWAYS use dependency injection.",
+      "ALWAYS use async/await for I/O operations."
+    ],
+    "canonical_snippet": "app.MapGroup(\"/api/users\")\n    .MapGet(\"/{id:guid}\", async (Guid id, IUserService svc) =>\n        await svc.FindByIdAsync(id) is { } user\n            ? Results.Ok(user)\n            : Results.NotFound())\n    .MapPost(\"/\", async (CreateUserRequest req, IUserService svc) =>\n        Results.Created($\"/api/users/{req.Id}\", await svc.CreateAsync(req)));"
+  }
+}

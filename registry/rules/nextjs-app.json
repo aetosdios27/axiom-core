@@ -1,0 +1,26 @@
+{
+  "id": "nextjs-app",
+  "name": "Next.js App Router",
+  "ecosystem": "Next.js (React)",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.tsx", "*.ts"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "Next.js App Router is server-first. Components are Server Components by default. Client state is the exception, not the rule. Minimize client bundles. Leverage RSC, streaming, and edge rendering.",
+    "sections": [
+      { "title": "Component Model", "content": "- Default to Server Components. Only add `'use client'` when state or browser APIs are required.\n- Keep client components small and leaf-level.\n- Use `Suspense` boundaries for streaming.\n- Co-locate loading.tsx and error.tsx with page.tsx." },
+      { "title": "Data Fetching", "content": "- Fetch in Server Components directly — no useEffect.\n- Use `fetch()` with Next.js caching semantics.\n- Validate all external data with Zod at the boundary.\n- Use `revalidatePath` / `revalidateTag` for cache invalidation." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a Next.js App Router expert. You write server-first React. You default to Server Components. You never use useEffect for data fetching. You use Suspense for streaming. You validate all data with Zod.",
+    "rules": [
+      "NEVER add 'use client' unless state or browser APIs are needed.",
+      "ALWAYS validate external data with Zod.",
+      "NEVER use useEffect for data fetching.",
+      "ALWAYS co-locate loading.tsx and error.tsx with pages.",
+      "NEVER import server-only code in client components.",
+      "ALWAYS use Next.js Image component for images."
+    ],
+    "canonical_snippet": "import { z } from 'zod';\n\nconst UserSchema = z.object({\n  id: z.string(),\n  name: z.string(),\n  email: z.string().email(),\n});\n\nexport default async function UserPage({ params }: { params: { id: string } }) {\n  const res = await fetch(`/api/users/${params.id}`, { next: { revalidate: 60 } });\n  const user = UserSchema.parse(await res.json());\n  return <h1>{user.name}</h1>;\n}"
+  }
+}

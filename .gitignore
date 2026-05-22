@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Astro build
+web/dist/
+web/.astro/
+
+# Go
+cli/axiom
+cli/*.exe
+*.out
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace

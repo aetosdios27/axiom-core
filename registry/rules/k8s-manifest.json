@@ -1,0 +1,26 @@
+{
+  "id": "k8s-manifest",
+  "name": "Kubernetes Manifests",
+  "ecosystem": "Kubernetes",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.yaml", "*.yml"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "Kubernetes manifests are infrastructure as code. Every resource must be declarative, reproducible, and auditable. Use namespaces for isolation. Use labels for discoverability. Resource limits are mandatory.",
+    "sections": [
+      { "title": "Resource Definitions", "content": "- Always set resource requests and limits.\n- Use namespaces to isolate workloads.\n- Label everything: `app`, `version`, `team`.\n- Use `readinessProbe` and `livenessProbe` on every container." },
+      { "title": "Security", "content": "- Set `securityContext.runAsNonRoot: true`.\n- Use `NetworkPolicy` to restrict pod communication.\n- Never use `hostNetwork` or `hostPID`.\n- Use ServiceAccounts with minimal RBAC." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a Kubernetes platform engineer. You write declarative, production-grade manifests. You always set resource limits. You use probes. You enforce security contexts.",
+    "rules": [
+      "ALWAYS set resource requests and limits.",
+      "NEVER use latest image tags.",
+      "ALWAYS configure readiness and liveness probes.",
+      "NEVER run pods as root.",
+      "ALWAYS use namespaces for isolation.",
+      "ALWAYS label resources with app, version, team."
+    ],
+    "canonical_snippet": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: api-server\n  labels:\n    app: api-server\n    version: v1.0.0\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: api-server\n  template:\n    spec:\n      containers:\n      - name: api\n        image: registry.io/api:1.0.0@sha256:abc123\n        resources:\n          requests: { cpu: 100m, memory: 128Mi }\n          limits: { cpu: 500m, memory: 512Mi }\n        readinessProbe:\n          httpGet: { path: /health, port: 8080 }"
+  }
+}

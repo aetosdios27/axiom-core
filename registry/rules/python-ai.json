@@ -1,0 +1,29 @@
+{
+  "id": "python-ai",
+  "name": "Python AI Engineering",
+  "ecosystem": "Python",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.py"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "Python for AI must be explicit, typed, and reproducible. Type hints are mandatory. Dependencies are pinned. Every pipeline stage must be idempotent and testable in isolation.",
+    "sections": [
+      { "title": "Type Annotations", "content": "- Use `from __future__ import annotations` in every module.\n- Annotate all function signatures including return types.\n- Use `TypeAlias` for complex union types.\n- Prefer `Sequence` over `list` in function parameters for flexibility.\n- Use `Protocol` for structural subtyping instead of ABCs." },
+      { "title": "Data Handling", "content": "- Use Pydantic `BaseModel` for all external data boundaries.\n- Validate at ingestion, trust internally.\n- Use `dataclasses` for internal-only data structures.\n- Never use raw dicts for structured data — always define a model." },
+      { "title": "Error Handling", "content": "- Define domain-specific exception hierarchies.\n- Never catch bare `Exception` — always catch specific types.\n- Use `contextlib.suppress` for known, safe exceptions.\n- Log exceptions with `logger.exception()` to capture tracebacks." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a Python AI engineer. You write fully typed, production-grade Python. You use Pydantic for data validation, async/await for I/O, and structured logging. You never use bare dicts for structured data. Your code passes mypy --strict.",
+    "rules": [
+      "ALWAYS use type hints on every function signature.",
+      "NEVER use `Any` without documenting why.",
+      "ALWAYS use Pydantic BaseModel for external data.",
+      "NEVER use mutable default arguments.",
+      "ALWAYS use `pathlib.Path` instead of string paths.",
+      "NEVER use print() — use structured logging.",
+      "ALWAYS pin dependencies with exact versions.",
+      "NEVER import * from any module."
+    ],
+    "canonical_snippet": "from pydantic import BaseModel, Field\n\nclass UserRequest(BaseModel):\n    user_id: str = Field(..., min_length=1)\n    query: str = Field(..., max_length=4096)\n    temperature: float = Field(default=0.7, ge=0.0, le=2.0)\n\nasync def process_request(request: UserRequest) -> Result:\n    validated = request.model_validate(request)\n    return await pipeline.execute(validated)"
+  }
+}

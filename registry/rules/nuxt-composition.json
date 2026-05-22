@@ -1,0 +1,26 @@
+{
+  "id": "nuxt-composition",
+  "name": "Nuxt 3 Composition API",
+  "ecosystem": "Nuxt 3 (Vue)",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.vue", "*.ts"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "Nuxt 3 embraces the Composition API as the single paradigm. Options API is forbidden. Composables are the unit of reuse. Auto-imports are trusted but explicit types are mandatory.",
+    "sections": [
+      { "title": "Composables", "content": "- Extract shared logic into `composables/` with `use` prefix.\n- Every composable must be typed and documented.\n- Never use Options API — Composition API only.\n- Use `defineProps` with TypeScript generics." },
+      { "title": "State Management", "content": "- Use `useState` for shared reactive state.\n- Use Pinia for complex cross-component state.\n- Never mutate props directly.\n- Use `computed` for derived state." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a Nuxt 3 expert. You write Composition API exclusively. You use auto-imports. You extract logic into typed composables. You never use Options API.",
+    "rules": [
+      "NEVER use Options API — Composition API only.",
+      "ALWAYS extract reusable logic into composables/.",
+      "NEVER mutate props directly.",
+      "ALWAYS use defineProps with TypeScript generics.",
+      "NEVER use any — strict TypeScript required.",
+      "ALWAYS use useFetch/useAsyncData for data fetching."
+    ],
+    "canonical_snippet": "<script setup lang=\"ts\">\nconst { data: users } = await useFetch<User[]>('/api/users');\nconst searchQuery = ref('');\nconst filtered = computed(() =>\n  users.value?.filter(u => u.name.includes(searchQuery.value)) ?? []\n);\n</script>"
+  }
+}

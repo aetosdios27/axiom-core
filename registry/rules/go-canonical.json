@@ -1,0 +1,51 @@
+{
+  "id": "go-canonical",
+  "name": "Go Canonical Style",
+  "ecosystem": "Go",
+  "version": "1.0.0",
+  "cli_target": {
+    "extensions": ["*.go"],
+    "agent_format": "cursor"
+  },
+  "human_view": {
+    "philosophy": "Go code must be clear, simple, and idiomatic. Every decision should optimize for readability at the call site. Clever code is a liability; obvious code is an asset. The standard library is your first dependency — reach for third-party packages only when the standard library is genuinely insufficient.",
+    "sections": [
+      {
+        "title": "Naming Conventions",
+        "content": "- Use `MixedCaps` or `mixedCaps` — never underscores.\n- Acronyms are all-caps: `HTTPServer`, `userID`, `xmlParser`.\n- Single-letter variables are acceptable only in short scopes: `for i, v := range items`.\n- Package names are lowercase, single-word, and never plural: `user`, not `users` or `userService`.\n- Interface names describe behavior: `Reader`, `Stringer`, `Handler`. Single-method interfaces take the method name + `er` suffix.\n- Exported names form a sentence with the package: `http.Server`, not `http.HTTPServer`."
+      },
+      {
+        "title": "Error Handling",
+        "content": "- Always check errors immediately. Never use `_` to discard an error unless you can prove it is safe.\n- Wrap errors with `fmt.Errorf(\"context: %w\", err)` to build a trace. The context string should describe what was being attempted, not what failed.\n- Sentinel errors (`var ErrNotFound = errors.New(\"not found\")`) live at package scope. Custom error types implement the `error` interface.\n- Never panic in library code. Panics are reserved for truly unrecoverable states during initialization."
+      },
+      {
+        "title": "Struct & Interface Design",
+        "content": "- Accept interfaces, return structs.\n- Keep interfaces small — one to three methods maximum. The bigger the interface, the weaker the abstraction.\n- Use functional options (`WithTimeout(d time.Duration)`) for configurable constructors instead of config structs with dozens of fields.\n- Zero values must be useful. A `sync.Mutex` is ready to use at zero value — design your types the same way."
+      },
+      {
+        "title": "Concurrency",
+        "content": "- Never start a goroutine without knowing how it will stop.\n- Pass `context.Context` as the first parameter to any function that may block or perform I/O.\n- Use `errgroup.Group` for coordinating concurrent work that can fail.\n- Channels are for communication; mutexes are for state protection. Don't use channels when a mutex is simpler."
+      },
+      {
+        "title": "Testing",
+        "content": "- Test files live next to the code: `user.go` → `user_test.go`.\n- Use table-driven tests for any function with more than two test cases.\n- Test behavior, not implementation. If refactoring breaks your test but not your API, the test was wrong.\n- Use `testdata/` directories for fixture files. Use `golden` files for complex output comparison."
+      }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a Go engineer. You write idiomatic, production-grade Go code that passes `go vet`, `staticcheck`, and `golangci-lint` with zero warnings. You never use `init()` functions. You always handle errors explicitly. You prefer the standard library over third-party dependencies. You write table-driven tests. Your code compiles and runs on the first attempt.",
+    "rules": [
+      "NEVER use `interface{}` or `any` without a type assertion or type switch within 3 lines.",
+      "ALWAYS wrap errors with `fmt.Errorf(\"...: %w\", err)` — never return bare errors.",
+      "NEVER use `log.Fatal` or `os.Exit` outside of `main()`.",
+      "ALWAYS pass `context.Context` as the first argument to I/O or blocking functions.",
+      "NEVER start a goroutine without a cancellation mechanism (context, done channel, or WaitGroup).",
+      "ALWAYS use `t.Helper()` in test helper functions.",
+      "NEVER use global mutable state. Package-level variables must be constants or read-only after init.",
+      "ALWAYS run `gofmt` and `goimports` — non-negotiable.",
+      "PREFER returning `(T, error)` over `(*T, error)` when T is small and copyable.",
+      "NEVER import a package solely for its side effects (`_`) without a comment explaining why."
+    ],
+    "canonical_snippet": "func (s *Service) GetUser(ctx context.Context, id string) (User, error) {\n\tif id == \"\" {\n\t\treturn User{}, fmt.Errorf(\"GetUser: %w\", ErrInvalidID)\n\t}\n\n\tuser, err := s.repo.FindByID(ctx, id)\n\tif err != nil {\n\t\treturn User{}, fmt.Errorf(\"GetUser(%q): %w\", id, err)\n\t}\n\n\treturn user, nil\n}"
+  }
+}

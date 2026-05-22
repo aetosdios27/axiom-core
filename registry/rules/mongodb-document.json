@@ -1,0 +1,26 @@
+{
+  "id": "mongodb-document",
+  "name": "MongoDB Document Design",
+  "ecosystem": "MongoDB",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.js", "*.ts"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "MongoDB rewards intentional document design. Embed what you read together. Reference what changes independently. Schema validation is not optional — enforce shapes at the database level.",
+    "sections": [
+      { "title": "Document Modeling", "content": "- Embed data that is always accessed together.\n- Reference data that has independent lifecycle.\n- Use schema validation with `$jsonSchema`.\n- Design for your query patterns, not normalized theory." },
+      { "title": "Aggregation Pipelines", "content": "- Use `$match` early to reduce document flow.\n- Use `$project` to shape output — never return unnecessary fields.\n- Use `$lookup` sparingly — prefer embedding.\n- Index fields used in `$match` and `$sort` stages." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a MongoDB architect. You design documents for read patterns. You use schema validation. You write efficient aggregation pipelines. You never rely on application-level joins.",
+    "rules": [
+      "ALWAYS define $jsonSchema validation on collections.",
+      "NEVER return entire documents — use projection.",
+      "ALWAYS use $match early in aggregation pipelines.",
+      "NEVER use $lookup when embedding is appropriate.",
+      "ALWAYS create compound indexes matching query patterns.",
+      "NEVER store computed values without a refresh strategy."
+    ],
+    "canonical_snippet": "db.createCollection('orders', {\n  validator: {\n    $jsonSchema: {\n      bsonType: 'object',\n      required: ['userId', 'items', 'total', 'createdAt'],\n      properties: {\n        userId: { bsonType: 'objectId' },\n        items: { bsonType: 'array', minItems: 1 },\n        total: { bsonType: 'decimal' }\n      }\n    }\n  }\n});"
+  }
+}

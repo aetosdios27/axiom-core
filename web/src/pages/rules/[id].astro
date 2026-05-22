@@ -1,0 +1,70 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { RuleDetail } from "../../components/RuleDetail";
+import { CodeBlock } from "../../components/CodeBlock";
+import { QuickStart } from "../../components/QuickStart";
+import { getAllRules } from "../../lib/rules";
+import type { Rule } from "../../lib/rules";
+
+export function getStaticPaths() {
+  const rules = getAllRules();
+  return rules.map((rule) => ({
+    params: { id: rule.id },
+    props: { rule },
+  }));
+}
+
+interface Props {
+  rule: Rule;
+}
+
+const { rule } = Astro.props;
+---
+
+<Layout title={rule.name} description={rule.human_view.philosophy}>
+  <article class="max-w-4xl mx-auto px-6 py-20">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-[12px] font-mono text-zinc-600 mb-10">
+      <a href="/" class="hover:text-zinc-400 transition-colors">axiom</a>
+      <span class="opacity-30">/</span>
+      <a href="/rules" class="hover:text-zinc-400 transition-colors">rules</a>
+      <span class="opacity-30">/</span>
+      <span class="text-zinc-400">{rule.id}</span>
+    </nav>
+
+    <!-- Header -->
+    <header class="mb-10">
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <span class="text-[11px] font-mono font-medium text-zinc-400 bg-zinc-900 px-2.5 py-1 rounded-sm ring-1 ring-zinc-700">
+          {rule.ecosystem}
+        </span>
+        <span class="text-[11px] font-mono text-zinc-600 bg-zinc-900 px-2 py-1 rounded-sm ring-1 ring-zinc-800">
+          v{rule.version}
+        </span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl font-black text-zinc-100 tracking-[-0.04em] mb-6">
+        {rule.name}
+      </h1>
+    </header>
+
+    <!-- Tabbed Content (React island) -->
+    <RuleDetail
+      client:load
+      name={rule.name}
+      ecosystem={rule.ecosystem}
+      version={rule.version}
+      philosophy={rule.human_view.philosophy}
+      sections={rule.human_view.sections}
+      systemPrompt={rule.agent_view.system_prompt}
+      rules={rule.agent_view.rules}
+      canonicalSnippet={rule.agent_view.canonical_snippet}
+      ruleId={rule.id}
+    />
+
+    <!-- CLI Quick Start -->
+    <QuickStart client:load ruleId={rule.id} />
+
+  </article>
+</Layout>

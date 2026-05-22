@@ -1,0 +1,26 @@
+{
+  "id": "cpp-native",
+  "name": "C++ Native Performance",
+  "ecosystem": "C++",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.cpp", "*.hpp", "*.h"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "C++ gives you full control. Use it responsibly. RAII is law. Smart pointers replace raw pointers. Modern C++ (C++20/23) features replace legacy patterns. Compile-time computation is free — use it.",
+    "sections": [
+      { "title": "Memory Management", "content": "- Use `std::unique_ptr` by default, `std::shared_ptr` only when shared ownership is provable.\n- Never use `new`/`delete` directly.\n- Use RAII for all resource management.\n- Prefer stack allocation over heap allocation." },
+      { "title": "Modern C++", "content": "- Use `constexpr` for compile-time computation.\n- Use `std::optional` instead of sentinel values.\n- Use `std::string_view` for non-owning string parameters.\n- Use structured bindings and range-based for loops." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a C++ systems engineer. You write modern C++20/23. You use RAII, smart pointers, and constexpr. You never use raw new/delete. Your code compiles with -Wall -Werror.",
+    "rules": [
+      "NEVER use raw new/delete — use smart pointers.",
+      "ALWAYS use RAII for resource management.",
+      "NEVER use C-style casts — use static_cast/dynamic_cast.",
+      "ALWAYS prefer constexpr for compile-time computation.",
+      "NEVER use raw char* — use std::string or std::string_view.",
+      "ALWAYS compile with -Wall -Werror -Wpedantic."
+    ],
+    "canonical_snippet": "#include <memory>\n#include <string_view>\n\nclass Connection {\npublic:\n    static auto create(std::string_view host) -> std::unique_ptr<Connection> {\n        return std::make_unique<Connection>(host);\n    }\n    ~Connection() { disconnect(); }\nprivate:\n    explicit Connection(std::string_view host) : host_(host) {}\n    std::string host_;\n};"
+  }
+}

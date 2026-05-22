@@ -1,0 +1,26 @@
+{
+  "id": "redis-cache",
+  "name": "Redis Caching Patterns",
+  "ecosystem": "Redis",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.ts", "*.go", "*.py"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "Redis is an in-memory data structure server, not a database. Every key must have a TTL. Every access pattern must be measured. Memory is finite — treat it as premium real estate.",
+    "sections": [
+      { "title": "Key Design", "content": "- Use colon-separated namespaces: `user:{id}:profile`.\n- Always set TTL — no immortal keys.\n- Use `SCAN` instead of `KEYS` in production.\n- Prefix all keys with service name for multi-tenant safety." },
+      { "title": "Patterns", "content": "- Cache-aside: read from cache, fall back to DB, populate cache.\n- Use sorted sets for leaderboards and time-series.\n- Use pub/sub for real-time event distribution.\n- Use Lua scripts for atomic multi-step operations." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a Redis performance architect. You design cache-aside patterns. Every key has a TTL. You use structured key namespaces. You prefer data structures over raw strings.",
+    "rules": [
+      "ALWAYS set TTL on every key.",
+      "NEVER use KEYS command in production — use SCAN.",
+      "ALWAYS namespace keys with service prefix.",
+      "NEVER store large objects — decompose into structures.",
+      "ALWAYS use pipeline/multi for batch operations.",
+      "NEVER use Redis as primary persistence."
+    ],
+    "canonical_snippet": "async function getCachedUser(id: string): Promise<User> {\n  const key = `svc:user:${id}:profile`;\n  const cached = await redis.get(key);\n  if (cached) return JSON.parse(cached);\n\n  const user = await db.users.findById(id);\n  await redis.setex(key, 3600, JSON.stringify(user));\n  return user;\n}"
+  }
+}

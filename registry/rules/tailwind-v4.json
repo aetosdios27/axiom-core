@@ -1,0 +1,26 @@
+{
+  "id": "tailwind-v4",
+  "name": "Tailwind CSS v4 Architecture",
+  "ecosystem": "Tailwind CSS v4",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.css", "*.tsx", "*.vue"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "Tailwind v4 is CSS-first configuration. No JavaScript config files. Design tokens live in CSS via @theme directives. Utility classes are the API. Custom CSS is the escape hatch, not the default.",
+    "sections": [
+      { "title": "Configuration", "content": "- Use `@theme` directives in CSS for all design tokens.\n- No `tailwind.config.js` — everything is CSS-first.\n- Use `@import 'tailwindcss'` as the single entry point.\n- Define custom utilities with `@utility` when needed." },
+      { "title": "Component Patterns", "content": "- Compose utilities in markup — avoid `@apply` except in global styles.\n- Use `group-*` and `peer-*` for relational styling.\n- Use CSS custom properties via `@theme` for theming.\n- Prefer responsive prefixes over media query CSS." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a Tailwind CSS v4 expert. You use CSS-first configuration. You never create tailwind.config.js. You compose utilities in markup. You use @theme for design tokens.",
+    "rules": [
+      "NEVER create tailwind.config.js — use @theme in CSS.",
+      "ALWAYS compose utilities in markup, not @apply.",
+      "NEVER use arbitrary values when a theme token exists.",
+      "ALWAYS use responsive prefixes for breakpoints.",
+      "NEVER hardcode colors — use theme tokens.",
+      "ALWAYS use @import 'tailwindcss' as entry point."
+    ],
+    "canonical_snippet": "@import \"tailwindcss\";\n\n@theme {\n  --color-brand: #3b82f6;\n  --color-surface: #09090b;\n  --font-sans: \"Inter\", sans-serif;\n}\n\n@layer base {\n  body {\n    @apply bg-surface text-white font-sans antialiased;\n  }\n}"
+  }
+}

@@ -1,0 +1,117 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "The immutable system of truth for AI agent style guides and coding standards." } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#000000" />
+
+    <title>{title} — Axiom</title>
+
+    <!-- Google Fonts: Inter + JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style is:global>
+      @import "../styles/global.css";
+    </style>
+  </head>
+
+  <body class="bg-background text-foreground min-h-screen antialiased dot-grid">
+    <!-- Sticky frosted nav -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-border">
+      <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3 group" id="nav-logo">
+          <span class="text-zinc-100 font-black text-xl tracking-[-0.04em] group-hover:text-white transition-colors duration-200">
+            AXIOM
+          </span>
+          <span class="hidden sm:inline-block text-[11px] font-mono font-medium text-zinc-500 bg-zinc-900 px-2 py-0.5 rounded-sm ring-1 ring-zinc-700">
+            v1.0
+          </span>
+        </a>
+
+        <div class="hidden md:flex items-center gap-6">
+          <a href="/rules" class="text-sm text-zinc-500 hover:text-zinc-100 transition-colors duration-200 font-medium" id="nav-rules">
+            Rules
+          </a>
+          <a href="/#cli" class="text-sm text-zinc-500 hover:text-zinc-100 transition-colors duration-200 font-medium" id="nav-cli">
+            CLI
+          </a>
+          <a
+            href="https://github.com/aetosdios27/axiom-core"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group text-sm text-zinc-500 hover:text-zinc-100 transition-colors duration-200 font-medium flex items-center gap-1.5"
+            id="nav-github"
+          >
+            GitHub
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-3.5 -rotate-45 transition-all duration-300 ease-out group-hover:rotate-0 group-hover:translate-x-0.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+
+        <!-- Mobile toggle -->
+        <input type="checkbox" id="mobile-nav-toggle" class="hidden peer" />
+        <label for="mobile-nav-toggle" class="md:hidden cursor-pointer p-2 text-zinc-500 hover:text-zinc-100 transition-colors" aria-label="Toggle navigation">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5" />
+          </svg>
+        </label>
+
+        <div class="hidden peer-checked:flex md:hidden fixed inset-0 top-14 bg-background/95 backdrop-blur-2xl flex-col items-center pt-16 gap-6 z-40">
+          <a href="/rules" class="text-lg text-zinc-400 hover:text-zinc-100 transition-colors">Rules</a>
+          <a href="/#cli" class="text-lg text-zinc-400 hover:text-zinc-100 transition-colors">CLI</a>
+          <a href="https://github.com/aetosdios27/axiom-core" target="_blank" rel="noopener noreferrer" class="text-lg text-zinc-400 hover:text-zinc-100 transition-colors">GitHub</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="pt-14">
+      <slot />
+    </main>
+
+    <footer class="border-t border-border mt-24 glass-strong bg-zinc-950/80 backdrop-blur-2xl relative z-10">
+      <div class="max-w-7xl mx-auto px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-sm text-zinc-600 font-mono">
+          © {new Date().getFullYear()} Axiom. Built for machines, readable by humans.
+        </p>
+        <div class="flex items-center gap-6">
+          <a href="https://github.com/aetosdios27/axiom-registry" target="_blank" rel="noopener noreferrer" class="text-[13px] text-zinc-600 hover:text-zinc-400 transition-colors font-mono">registry</a>
+          <a href="https://github.com/aetosdios27/axiom-core" target="_blank" rel="noopener noreferrer" class="text-[13px] text-zinc-600 hover:text-zinc-400 transition-colors font-mono">source</a>
+        </div>
+      </div>
+    </footer>
+    <script>
+      import Lenis from "lenis";
+
+      const lenis = new Lenis({
+        autoRaf: true,
+      });
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="/#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          const targetId = this.getAttribute('href')?.replace('/', '');
+          if (!targetId) return;
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            e.preventDefault();
+            lenis.scrollTo(targetElement);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

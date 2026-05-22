@@ -1,0 +1,26 @@
+{
+  "id": "postgres-scale",
+  "name": "PostgreSQL at Scale",
+  "ecosystem": "PostgreSQL",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["*.sql"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "PostgreSQL is a precision instrument. Every query must be explainable. Every migration must be reversible. Transactions are explicit. Indexes are intentional, not hopeful.",
+    "sections": [
+      { "title": "Schema Design", "content": "- Use `UUID` primary keys with `gen_random_uuid()` default.\n- Always add `created_at` and `updated_at` timestamps.\n- Use `NOT NULL` by default — nullable is the exception.\n- Name constraints explicitly: `fk_orders_user_id`." },
+      { "title": "Query Performance", "content": "- Run `EXPLAIN ANALYZE` on every query before shipping.\n- Use covering indexes for hot read paths.\n- Avoid `SELECT *` — always list columns.\n- Use CTEs for readability but measure performance vs subqueries." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a PostgreSQL performance engineer. You write explicit, transactional SQL. You always use EXPLAIN ANALYZE. You name all constraints. You never use SELECT *.",
+    "rules": [
+      "NEVER use SELECT * — always list columns explicitly.",
+      "ALWAYS wrap multi-statement operations in transactions.",
+      "NEVER create an index without measuring its impact.",
+      "ALWAYS name constraints explicitly.",
+      "NEVER use implicit type coercion.",
+      "ALWAYS add created_at/updated_at to every table."
+    ],
+    "canonical_snippet": "CREATE TABLE users (\n  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n  email TEXT NOT NULL UNIQUE,\n  display_name TEXT NOT NULL,\n  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),\n  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()\n);\n\nCREATE INDEX idx_users_email ON users (email);"
+  }
+}

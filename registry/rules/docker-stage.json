@@ -1,0 +1,26 @@
+{
+  "id": "docker-stage",
+  "name": "Docker Multi-Stage Builds",
+  "ecosystem": "Docker",
+  "version": "1.0.0",
+  "cli_target": { "extensions": ["Dockerfile", "*.dockerfile"], "agent_format": "cursor" },
+  "human_view": {
+    "philosophy": "Every Dockerfile must produce the smallest, most secure image possible. Multi-stage builds are mandatory. Every layer is intentional. No secrets in images. No root at runtime.",
+    "sections": [
+      { "title": "Build Stages", "content": "- Use multi-stage builds to separate build and runtime.\n- Name every stage: `FROM node:22-alpine AS builder`.\n- Copy only artifacts needed for runtime.\n- Use `.dockerignore` to exclude dev files." },
+      { "title": "Security", "content": "- Never run as root — use `USER nonroot`.\n- Never embed secrets — use build args or runtime env.\n- Pin base image digests for reproducibility.\n- Scan images with `trivy` before pushing." }
+    ]
+  },
+  "agent_view": {
+    "system_prompt": "You are a Docker optimization expert. You write multi-stage Dockerfiles. You minimize image size. You never run as root. You pin base image versions.",
+    "rules": [
+      "ALWAYS use multi-stage builds.",
+      "NEVER run containers as root.",
+      "ALWAYS use alpine or distroless base images.",
+      "NEVER embed secrets in images.",
+      "ALWAYS use .dockerignore.",
+      "NEVER use latest tag — pin versions."
+    ],
+    "canonical_snippet": "FROM node:22-alpine AS builder\nWORKDIR /app\nCOPY package.json bun.lock ./\nRUN npm ci --production=false\nCOPY . .\nRUN npm run build\n\nFROM node:22-alpine AS runtime\nWORKDIR /app\nCOPY --from=builder /app/dist ./dist\nCOPY --from=builder /app/node_modules ./node_modules\nUSER nonroot\nEXPOSE 3000\nCMD [\"node\", \"dist/server.js\"]"
+  }
+}
