@@ -59,7 +59,11 @@ Examples:
 		tw.Flush()
 
 		// Print supported formats
-		fmt.Printf("\n  Supported formats: %s\n\n", strings.Join(writer.ListFormats(), ", "))
+		fmt.Printf("\n  Supported formats: %s\n", strings.Join(writer.ListFormats(), ", "))
+		
+		// Print next steps guidance
+		fmt.Printf("\n  Next step: run 'axiom init <id>' to install a rule to your project.\n")
+		fmt.Printf("  Example: axiom init typescript-strict --format cursor\n\n")
 
 		return nil
 	},
