@@ -5,7 +5,7 @@ import { CodeBlock } from "../components/CodeBlock";
 import { DynamicInstallButton } from "../components/DynamicInstallButton";
 import { getAllRules } from "../lib/rules";
 
-const rules = getAllRules();
+const rules = await getAllRules();
 ---
 
 <Layout title="Axiom" description="The immutable system of truth for AI agent style guides and coding standards.">

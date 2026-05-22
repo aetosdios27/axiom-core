@@ -24,7 +24,7 @@ Examples:
 	RunE: func(cmd *cobra.Command, args []string) error {
 		baseURL := registryURL
 		if baseURL == "" {
-			return fmt.Errorf("--registry flag is required for listing (provide a local directory path)")
+			baseURL = registry.DefaultBaseURL
 		}
 
 		rules, err := registry.ListRules(baseURL)

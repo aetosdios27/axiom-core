@@ -17,6 +17,9 @@ const (
 	// DefaultBaseURL is the raw GitHub URL for the Axiom registry.
 	DefaultBaseURL = "https://raw.githubusercontent.com/aetosdios27/axiom-registry/main/rules"
 
+	// DefaultIndexURL is the raw GitHub URL for the Axiom registry manifest.
+	DefaultIndexURL = "https://raw.githubusercontent.com/aetosdios27/axiom-registry/main/index.json"
+
 	httpTimeout = 10 * time.Second
 )
 
@@ -104,9 +107,39 @@ func listLocal(dir string) ([]schema.Rule, error) {
 }
 
 func listRemote(baseURL string) ([]schema.Rule, error) {
-	// For remote registries, we'd need an index.json endpoint.
-	// For now, return an informative error.
-	return nil, fmt.Errorf("remote listing not supported for %s (use --registry with a local directory)", baseURL)
+	var indexURL string
+	if baseURL == DefaultBaseURL {
+		indexURL = DefaultIndexURL
+	} else {
+		// Try to construct an index URL from the rules directory
+		indexURL = strings.TrimRight(baseURL, "/") + "/index.json"
+		if strings.HasSuffix(indexURL, "rules/index.json") {
+			indexURL = strings.Replace(indexURL, "rules/index.json", "index.json", 1)
+		}
+	}
+
+	client := &http.Client{Timeout: httpTimeout}
+	resp, err := client.Get(indexURL)
+	if err != nil {
+		return nil, fmt.Errorf("fetching registry index from %s: %w", indexURL, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("fetching registry index: HTTP %d from %s", resp.StatusCode, indexURL)
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("reading response for index: %w", err)
+	}
+
+	var rules []schema.Rule
+	if err := json.Unmarshal(data, &rules); err != nil {
+		return nil, fmt.Errorf("parsing registry index JSON: %w", err)
+	}
+
+	return rules, nil
 }
 
 func parseRule(data []byte) (*schema.Rule, error) {

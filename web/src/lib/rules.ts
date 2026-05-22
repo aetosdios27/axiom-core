@@ -32,7 +32,7 @@ export interface Rule {
   agent_view: AgentView;
 }
 
-function resolveRegistryPath(): string {
+function resolveLocalRegistryPath(): string | null {
   // Try the external registry first (sibling repo)
   const externalRegistry = path.resolve(process.cwd(), "..", "..", "registry", "rules");
   if (fs.existsSync(externalRegistry)) {
@@ -45,28 +45,50 @@ function resolveRegistryPath(): string {
     return localRegistry;
   }
 
-  // Final fallback: mock data
-  return path.resolve(process.cwd(), "src", "data", "mock");
+  return null;
 }
 
-export function getAllRules(): Rule[] {
-  const dir = resolveRegistryPath();
+const REMOTE_INDEX_URL = "https://raw.githubusercontent.com/aetosdios27/axiom-registry/main/index.json";
+const REMOTE_RULES_BASE = "https://raw.githubusercontent.com/aetosdios27/axiom-registry/main/rules";
 
-  if (!fs.existsSync(dir)) {
-    return [];
+export async function getAllRules(): Promise<Rule[]> {
+  const localDir = resolveLocalRegistryPath();
+
+  if (localDir) {
+    // Local fallback: read from disk
+    const files = fs.readdirSync(localDir).filter((f: string) => f.endsWith(".json"));
+    return files
+      .map((file: string) => {
+        const raw = fs.readFileSync(path.join(localDir, file), "utf-8");
+        return JSON.parse(raw) as Rule;
+      })
+      .sort((a: Rule, b: Rule) => a.name.localeCompare(b.name));
   }
 
-  const files = fs.readdirSync(dir).filter((f: string) => f.endsWith(".json"));
+  // Remote execution: fetch index and then payload files concurrently
+  console.log(`[Axiom] Fetching remote index from ${REMOTE_INDEX_URL}`);
+  const res = await fetch(REMOTE_INDEX_URL);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch remote registry index: ${res.statusText}`);
+  }
 
-  return files
-    .map((file: string) => {
-      const raw = fs.readFileSync(path.join(dir, file), "utf-8");
-      return JSON.parse(raw) as Rule;
-    })
-    .sort((a: Rule, b: Rule) => a.name.localeCompare(b.name));
+  const index = await res.json() as { id: string }[];
+  
+  console.log(`[Axiom] Fetching ${index.length} rules remotely...`);
+  const rulePromises = index.map(async (entry) => {
+    const url = `${REMOTE_RULES_BASE}/${entry.id}.json`;
+    const r = await fetch(url);
+    if (!r.ok) {
+      throw new Error(`Failed to fetch rule ${entry.id}: ${r.statusText}`);
+    }
+    return r.json() as Promise<Rule>;
+  });
+
+  const rules = await Promise.all(rulePromises);
+  return rules.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export function getRuleById(id: string): Rule | undefined {
-  const rules = getAllRules();
+export async function getRuleById(id: string): Promise<Rule | undefined> {
+  const rules = await getAllRules();
   return rules.find((r) => r.id === id);
 }

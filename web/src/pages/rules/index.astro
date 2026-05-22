@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import { InteractiveCard } from "../../components/InteractiveCard";
 import { getAllRules } from "../../lib/rules";
 
-const rules = getAllRules();
+const rules = await getAllRules();
 const ecosystems = [...new Set(rules.map((r) => r.ecosystem))];
 ---
 

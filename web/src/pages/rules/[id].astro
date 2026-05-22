@@ -6,8 +6,8 @@ import { QuickStart } from "../../components/QuickStart";
 import { getAllRules } from "../../lib/rules";
 import type { Rule } from "../../lib/rules";
 
-export function getStaticPaths() {
-  const rules = getAllRules();
+export async function getStaticPaths() {
+  const rules = await getAllRules();
   return rules.map((rule) => ({
     params: { id: rule.id },
     props: { rule },
