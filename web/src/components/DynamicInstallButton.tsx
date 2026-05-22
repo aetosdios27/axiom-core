@@ -3,9 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, Copy, TerminalSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const COMMANDS = `curl -sSL https://raw.githubusercontent.com/aetosdios27/axiom-core/main/install.sh | bash
-axiom init go-canonical --format cursor
-axiom list`;
+const COMMANDS = `curl -sSL https://raw.githubusercontent.com/aetosdios27/axiom-core/main/install.sh | bash`;
 
 export function DynamicInstallButton() {
   const [expanded, setExpanded] = useState(false);
