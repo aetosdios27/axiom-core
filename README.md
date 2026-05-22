@@ -14,16 +14,16 @@ axiom-core/
 ```
 
 - **Registry** → Raw `.json` files. No database. Version-controlled truth.
-- **Web Hub** → Astro + Tailwind v4. Zero client-side JS. Sub-second builds.
+- **Web Hub** → Astro + React + Tailwind v4. Glassmorphic brutalism. Sub-second builds.
 - **CLI Engine** → Compiled Go + Cobra. One binary, seven output formats.
 
 ## Web Hub
 
 ```bash
 cd web
-npm install
-npm run dev      # → http://localhost:4321
-npm run build    # → static output in dist/
+bun install
+bun run dev      # → http://localhost:4321
+bun run build    # → static output in dist/
 ```
 
 ## CLI
