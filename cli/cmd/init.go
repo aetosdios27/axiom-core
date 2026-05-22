@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/aetosdios27/axiom-core/cli/internal/registry"
@@ -67,7 +68,13 @@ Examples:
 			if err != nil {
 				return fmt.Errorf("writing %s format: %w", w.Format(), err)
 			}
-			fmt.Printf("  ✓ %s → %s\n", w.Format(), path)
+			
+			absPath, err := filepath.Abs(path)
+			if err != nil {
+				absPath = path // fallback
+			}
+			
+			fmt.Printf("  ✓ %s → %s\n", w.Format(), absPath)
 		}
 
 		fmt.Printf("\n  ✓ Done. %s v%s applied.\n", rule.Name, rule.Version)
