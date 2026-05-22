@@ -1,9 +1,7 @@
 version: 2
 project_name: axiom
 
-monorepo:
-  tag_prefix: cli/
-  dir: cli
+
 
 builds:
   - id: axiom
