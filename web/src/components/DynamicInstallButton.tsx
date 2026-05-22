@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, Copy, TerminalSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const COMMANDS = `go install github.com/aetosdios27/axiom-core/cli@latest
+const COMMANDS = `curl -sSL https://raw.githubusercontent.com/aetosdios27/axiom-core/main/install.sh | bash
 axiom init go-canonical --format cursor
 axiom list`;
 
@@ -105,7 +105,7 @@ export function DynamicInstallButton() {
                   <div>
                     <div className="text-[11px] font-mono text-zinc-500 mb-1.5 select-none whitespace-nowrap"># Install Axiom CLI</div>
                     <div className="text-[13px] font-mono text-zinc-200 bg-black/40 px-3 py-2 rounded border border-zinc-800 whitespace-nowrap overflow-x-auto custom-scrollbar">
-                      <span className="text-[#00ADD8]">go</span> install github.com/aetosdios27/axiom-core/cli@latest
+                      <span className="text-[#00ADD8]">curl</span> -sSL https://raw.githubusercontent.com/aetosdios27/axiom-core/main/install.sh | <span className="text-[#00ADD8]">bash</span>
                     </div>
                   </div>
                   

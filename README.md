@@ -31,14 +31,14 @@ bun run build    # → static output in dist/
 ### Install
 
 ```bash
-go install github.com/aetosdios27/axiom-core/cli@latest
+curl -sSL https://raw.githubusercontent.com/aetosdios27/axiom-core/main/install.sh | bash
 ```
 
 ### Usage
 
 ```bash
 # List all available rules
-axiom list --registry ./registry/rules
+axiom list
 
 # Initialize rules for your project
 axiom init go-standard --format cursor
