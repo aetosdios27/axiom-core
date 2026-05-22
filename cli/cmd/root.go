@@ -13,15 +13,18 @@ var rootCmd = &cobra.Command{
 	Use:   "axiom",
 	Short: "The immutable system of truth for AI agent style guides",
 	Long: `
-   ▄▀▄ ▀▄▀ ▄▀▄ █▄ ▄█
-   █▀█ █ █ █ █ █ ▀ █  
-   ▀ ▀ ▀ ▀  ▀  ▀   ▀ 
+   ▄▀▄ ▀▄▀  █  ▄▀▄ █▄ ▄█
+   █▀█ █ █  █  █ █ █ ▀ █
+   ▀ ▀ ▀ ▀  ▀   ▀  ▀   ▀ 
 
    Axiom — fetch, validate, and write production-grade
    coding standards for any AI agent platform.
 
    Supports: Cursor, Windsurf, Claude Code, GitHub Copilot,
    Cline, Codex (AGENTS.md), and Zed.`,
+	CompletionOptions: cobra.CompletionOptions{
+		DisableDefaultCmd: true,
+	},
 }
 
 func init() {
