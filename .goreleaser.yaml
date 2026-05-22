@@ -1,0 +1,72 @@
+version: 2
+project_name: axiom
+
+monorepo:
+  tag_prefix: cli/
+  dir: cli
+
+builds:
+  - id: axiom
+    dir: cli
+    main: ./main.go
+    binary: axiom
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/aetosdios27/axiom-core/cli/cmd.Version={{.Version}}
+      - -X github.com/aetosdios27/axiom-core/cli/cmd.Commit={{.FullCommit}}
+      - -X github.com/aetosdios27/axiom-core/cli/cmd.BuildDate={{.Date}}
+
+archives:
+  - format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+checksum:
+  name_template: 'checksums.txt'
+
+sboms:
+  - artifacts: archive
+
+brews:
+  - repository:
+      owner: aetosdios27
+      name: homebrew-axiom
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    directory: Formula
+    homepage: "https://github.com/aetosdios27/axiom-core"
+    description: "The immutable system of truth for AI agent style guides and coding standards."
+    license: "MIT"
+    test: |
+      system "#{bin}/axiom version"
+
+dockers:
+  - image_templates:
+      - "ghcr.io/aetosdios27/axiom:{{ .Version }}"
+      - "ghcr.io/aetosdios27/axiom:latest"
+    dockerfile: cli/Dockerfile
+    build_flag_templates:
+      - "--label=org.opencontainers.image.title={{ .ProjectName }}"
+      - "--label=org.opencontainers.image.description=Axiom CLI Engine"
+      - "--label=org.opencontainers.image.url=https://github.com/aetosdios27/axiom-core"
+      - "--label=org.opencontainers.image.source=https://github.com/aetosdios27/axiom-core"
+      - "--label=org.opencontainers.image.version={{ .Version }}"
+      - "--label=org.opencontainers.image.created={{ .Date }}"
+      - "--label=org.opencontainers.image.revision={{ .FullCommit }}"
+      - "--label=org.opencontainers.image.licenses=MIT"
